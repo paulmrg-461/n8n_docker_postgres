@@ -2,16 +2,18 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:14
+    image: postgres:latest
     container_name: postgres
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    networks:
+      - app_network
     dns:
       - 8.8.8.8
       - 8.8.4.4
@@ -31,15 +33,23 @@ services:
       - N8N_BASIC_AUTH_ACTIVE=true
       - N8N_BASIC_AUTH_USER=${N8N_BASIC_AUTH_USER}
       - N8N_BASIC_AUTH_PASSWORD=${N8N_BASIC_AUTH_PASSWORD}
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+      - N8N_RUNNERS_ENABLED=true
     depends_on:
       - postgres
     volumes:
       - n8n_data:/home/node/.n8n
-      - /home/devpaul/dev-projects/DevPaul/n8n/n8n_assets/:/data
+      - ./n8n_local_assets:/data
+    networks:
+      - app_network
     dns:
       - 8.8.8.8
       - 8.8.4.4
 
 volumes:
-  postgres_data:
+  pgdata:
   n8n_data:
+
+networks:
+  app_network:
+    driver: bridge

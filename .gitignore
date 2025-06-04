@@ -1,3 +1,3 @@
 n8n/
-n8n_assets/*
+n8n_local_assets/*
 .env
